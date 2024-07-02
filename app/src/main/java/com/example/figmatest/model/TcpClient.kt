@@ -71,9 +71,7 @@ class TcpClient(val upperLevelReceiver: DataReceiverIfc): DataSenderIfc {
                         }
                         if (input!!.read(receiveBuffer!!.array(), 0, bytesToRead) > 0) {
                             receiveBuffer!!.limit(bytesToRead)
-                            withContext(Dispatchers.Main) {
-                                upperLevelReceiver.onDataReceived(receiveBuffer)
-                            }
+                            upperLevelReceiver.onDataReceived(receiveBuffer)
                         }
                     }
 
