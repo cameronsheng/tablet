@@ -10,6 +10,9 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/imt.base.core" />
+            <option value="$PROJECT_DIR$/imt.base.lib.remoting" />
+            <option value="$PROJECT_DIR$/protocols" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

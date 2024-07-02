@@ -1,15 +1,8 @@
 package com.example.figmatest
 
-import android.content.ContentValues.TAG
-import android.content.Context
-import android.net.MacAddress
-import android.net.wifi.SoftApConfiguration
-import android.net.wifi.WifiManager
-import android.net.wifi.WifiManager.LocalOnlyHotspotCallback
 import android.net.wifi.WifiManager.LocalOnlyHotspotReservation
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,15 +14,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.figmatest.controller.DataController
+import com.example.figmatest.model.SerialDevice
 import com.example.figmatest.ui.theme.FigmaTestTheme
-import com.example.figmatest.ui.theme.UnhiddenSoftApConfigurationBuilder
-import java.util.concurrent.Executor
-import java.util.concurrent.Executors
+import com.example.figmatest.view.SerialDataViewIfc
 
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), SerialDataViewIfc {
 
     private var mReservation: LocalOnlyHotspotReservation? = null
+
+    private var dataController : DataController? = null
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,77 +37,68 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        val builder = UnhiddenSoftApConfigurationBuilder();
-        val macAddress = MacAddress.fromString("02:00:00:00:00:00");
-        val config = builder.setBand(UnhiddenSoftApConfigurationBuilder.BAND_2GHZ)
-            .setAutoshutdownEnabled(true)
-            .setPassphrase("12345678", UnhiddenSoftApConfigurationBuilder.SECURITY_TYPE_WPA2_PSK)
-            .setMacRandomizationSetting(UnhiddenSoftApConfigurationBuilder.RANDOMIZATION_PERSISTENT)
-            .setSsid("Andorid_test")
-            .build()
-
-        val executor = Executors.newSingleThreadExecutor();
-
-        // Implement the LocalOnlyHotspotCallback
-        val callback = object : WifiManager.LocalOnlyHotspotCallback() {
-            override fun onStarted(reservation: WifiManager.LocalOnlyHotspotReservation?) {
-                Log.d(TAG, "Wifi Hotspot is on now")
-                if (reservation != null) {
-                    Log.d(TAG, "SSID is " + reservation.softApConfiguration.wifiSsid.toString())
-                };
-                if (reservation != null) {
-                    Log.d(TAG, "PWD is " + reservation.softApConfiguration.passphrase.toString())
-                };
-                mReservation = reservation
-            }
-
-            override fun onStopped() {
-                println("LocalOnlyHotspot stopped.")
-            }
-
-            override fun onFailed(reason: Int) {
-                println("LocalOnlyHotspot failed with reason: $reason")
-            }
-        };
-        val wifiManager = this.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager;
-        WifiManager::class.java.getMethod(
-            "startLocalOnlyHotspot", SoftApConfiguration::class.java, Executor::class.java,
-            LocalOnlyHotspotCallback::class.java,
-        ).invoke(wifiManager, config, executor, callback);
-
+        Log.d("Main", "start serial controller")
+        SerialDevice.start(this)
+//        dataController = DataController(this, this)
+//        dataController?.start()
+//        val builder = UnhiddenSoftApConfigurationBuilder();
+//        val macAddress = MacAddress.fromString("02:00:00:00:00:00");
+//        val config = builder.setBand(UnhiddenSoftApConfigurationBuilder.BAND_2GHZ)
+//            .setAutoshutdownEnabled(true)
+//            .setPassphrase("12345678", UnhiddenSoftApConfigurationBuilder.SECURITY_TYPE_WPA2_PSK)
+//            .setMacRandomizationSetting(UnhiddenSoftApConfigurationBuilder.RANDOMIZATION_PERSISTENT)
+//            .setSsid("Andorid_test")
+//            .build()
+//
+//        val executor = Executors.newSingleThreadExecutor();
+//
+//        // Implement the LocalOnlyHotspotCallback
+//        val callback = object : WifiManager.LocalOnlyHotspotCallback() {
+//            override fun onStarted(reservation: WifiManager.LocalOnlyHotspotReservation?) {
+//                Log.d(TAG, "Wifi Hotspot is on now")
+//                if (reservation != null) {
+//                    Log.d(TAG, "SSID is " + reservation.softApConfiguration.wifiSsid.toString())
+//                };
+//                if (reservation != null) {
+//                    Log.d(TAG, "PWD is " + reservation.softApConfiguration.passphrase.toString())
+//                };
+//                mReservation = reservation
+//            }
+//
+//            override fun onStopped() {
+//                println("LocalOnlyHotspot stopped.")
+//            }
+//
+//            override fun onFailed(reason: Int) {
+//                println("LocalOnlyHotspot failed with reason: $reason")
+//            }
+//        };
 //        val wifiManager = this.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager;
-//        wifiManager.startLocalOnlyHotspot(
-//            @RequiresApi(Build.VERSION_CODES.O)
-//            object : LocalOnlyHotspotCallback() {
-//                @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-//                override fun onStarted(reservation: LocalOnlyHotspotReservation) {
-//                    super.onStarted(reservation)
-//                    Log.d(TAG, "Wifi Hotspot is on now")
-//                    Log.d(TAG, "SSID is " + reservation.softApConfiguration.wifiSsid.toString());
-//                    Log.d(TAG, "PWD is " + reservation.softApConfiguration.passphrase.toString());
-//                    mReservation = reservation
-//                }
-//
-//                override fun onStopped() {
-//                    super.onStopped()
-//                    Log.d(TAG, "onStopped: ")
-//                }
-//
-//                override fun onFailed(reason: Int) {
-//                    super.onFailed(reason)
-//                    Log.d(TAG, "onFailed: ")
-//                }
-//            },
-//            Handler()
-//        );
+//        WifiManager::class.java.getMethod(
+//            "startLocalOnlyHotspot", SoftApConfiguration::class.java, Executor::class.java,
+//            LocalOnlyHotspotCallback::class.java,
+//        ).invoke(wifiManager, config, executor, callback);
 
+//        val intent = Intent(this, SerialDataView::class.java)
+//        startActivity(intent)
+    }
+
+    override fun displayData(data: String) {
+        setContent {
+            FigmaTestTheme {
+                // A surface container using the 'background' color from the theme
+                Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+                    Greeting(data)
+                }
+            }
+        }
     }
 }
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(
-            text = "Hello $name!",
+            text = "$name!",
             modifier = modifier
     )
 }
