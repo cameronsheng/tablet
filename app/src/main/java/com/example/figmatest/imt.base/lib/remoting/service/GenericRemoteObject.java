@@ -11,8 +11,9 @@ public class GenericRemoteObject implements RemoteObjectIfc {
     private SerializableIfc dataToSend;
     private SerializableIfc receivedData;
 
-    public GenericRemoteObject(GenericReceiverIfc receiver) {
+    public GenericRemoteObject(GenericReceiverIfc receiver, SerializableIfc receivedData) {
         this.receiver = receiver;
+        this.receivedData = receivedData;
     }
 
     @Override

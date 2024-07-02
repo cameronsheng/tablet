@@ -9,7 +9,14 @@
         android:id="@+id/sendDataButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="onSendDataPressed"
-        android:text="Send data" />
+        android:onClick="onSerialDataPressed"
+        android:text="SerialData" />
 
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onTcpDataPressed"
+        android:text="TcpData"
+        tools:text="TcpData" />
 </LinearLayout>

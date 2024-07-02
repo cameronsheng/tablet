@@ -1,6 +1,7 @@
 package com.example.figmatest.model
 
 import com.example.figmatest.DataListenerIfc
+import com.example.figmatest.imt.base.lib.remoting.DataReceiverIfc
 import com.example.figmatest.imt.base.lib.remoting.DataSenderIfc
 import kotlinx.coroutines.CoroutineScope
 import java.io.BufferedReader
@@ -12,15 +13,21 @@ import java.net.UnknownHostException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.InputStream
 import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 
-class TcpClient : DataProducer(), DataSenderIfc {
+class TcpClient(val upperLevelReceiver: DataReceiverIfc): DataSenderIfc {
 
     private var socket: Socket? = null
     private var output: OutputStream? = null
-    private var input: BufferedReader? = null
+    private var input: InputStream? = null
+    private var receiveBuffer: ByteBuffer? = null
+
+    init {
+        receiveBuffer = ByteBuffer.allocate(4096)
+    }
 
     // Initialize the socket and streams
     private suspend fun init(ipAddress: String, port: Int) {
@@ -28,7 +35,7 @@ class TcpClient : DataProducer(), DataSenderIfc {
             withContext(Dispatchers.IO) {
                 socket = Socket(ipAddress, port)
                 output = socket!!.getOutputStream()
-                input = BufferedReader(InputStreamReader(socket!!.getInputStream()))
+                input = socket!!.getInputStream()
             }
         } catch (e: UnknownHostException) {
             e.printStackTrace()
@@ -52,12 +59,24 @@ class TcpClient : DataProducer(), DataSenderIfc {
     }
 
     // Receive data from the TCP server (non-blocking)
-    suspend fun receive() {
-        return withContext(Dispatchers.IO) {
+     fun receive() {
+        CoroutineScope(Dispatchers.IO).launch {
             try {
                 while(true) {
-                    val data = input?.readLine() ?: break
-                    processData(data.encodeToByteArray())
+                    var bytesToRead = 0
+                    bytesToRead = input?.available()!!
+                    if (bytesToRead > 0) {
+                        if (bytesToRead > receiveBuffer?.capacity()!!) {
+                            bytesToRead = receiveBuffer!!.capacity()
+                        }
+                        if (input!!.read(receiveBuffer!!.array(), 0, bytesToRead) > 0) {
+                            receiveBuffer!!.limit(bytesToRead)
+                            withContext(Dispatchers.Main) {
+                                upperLevelReceiver.onDataReceived(receiveBuffer)
+                            }
+                        }
+                    }
+
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

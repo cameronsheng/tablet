@@ -1,5 +1,5 @@
 package com.example.figmatest.view
 
-interface SerialDataViewIfc {
+interface DataViewIfc {
     fun displayData(data : String)
 }

@@ -2,7 +2,7 @@ package com.example.figmatest.model
 
 import com.example.figmatest.DataListenerIfc
 
-abstract class DataProducer : DataProducerIfc {
+abstract class RemoteDataProducer : DataProducerIfc {
 
     protected val dataListeners = ArrayList<DataListenerIfc>()
 
@@ -14,7 +14,7 @@ abstract class DataProducer : DataProducerIfc {
         dataListeners.remove(listener)
     }
 
-    fun processData(data : ByteArray) {
+    fun processData(data : Any) {
         for (listener in dataListeners) {
             listener.onDataReceived(data)
         }

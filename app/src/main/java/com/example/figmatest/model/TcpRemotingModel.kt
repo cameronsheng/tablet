@@ -1,18 +1,21 @@
 package com.example.figmatest.model
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+
 object TcpRemotingModel : RemotingModel() {
 
     private var tcpClient: TcpClient? = null
 
     init {
-        tcpClient = TcpClient()
+        tcpClient = TcpClient(this)
         setLowerLevelSender(tcpClient!!)
     }
-    suspend fun start() {
-        tcpClient?.connect("192.168.5.166", 8080)
-        sendSettings()
-        sendCommand()
-        tcpClient?.addDataListener(this)
-        tcpClient?.receive()
+    fun start() {
+        CoroutineScope(Dispatchers.Main).launch {
+            tcpClient?.connect("192.168.5.166", 8080)
+            tcpClient?.receive()
+        }
     }
 }

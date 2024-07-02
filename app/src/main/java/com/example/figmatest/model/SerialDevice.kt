@@ -19,7 +19,7 @@ import java.nio.ByteBuffer
 import java.util.concurrent.Executors
 
 
-object SerialDevice : DataProducer(), DataSenderIfc {
+object SerialDevice : RemoteDataProducer(), DataSenderIfc {
 
     private var serialPort: UsbSerialPort? = null
     private var ioManager: SerialInputOutputManager? = null

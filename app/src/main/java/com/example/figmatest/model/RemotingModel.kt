@@ -1,7 +1,7 @@
 package com.example.figmatest.model
 
-import com.example.figmatest.DataListenerIfc
 import com.example.figmatest.imt.base.core.serialization.SerializableIfc
+import com.example.figmatest.imt.base.lib.remoting.DataReceiverIfc
 import com.example.figmatest.imt.base.lib.remoting.DataSenderIfc
 import com.example.figmatest.imt.base.lib.remoting.layers.crc16check.Crc16CheckFailedCallbackIfc
 import com.example.figmatest.imt.base.lib.remoting.layers.crc16check.Crc16CheckReceiveLayer
@@ -19,7 +19,7 @@ import com.example.figmatest.protocol.ProtocolIdentifier
 import com.example.figmatest.protocol.VitalSignsDataProtocol
 import java.nio.ByteBuffer
 
-abstract class RemotingModel() : Crc16CheckFailedCallbackIfc, DataListenerIfc {
+abstract class RemotingModel() : RemoteDataProducer(), Crc16CheckFailedCallbackIfc, DataReceiverIfc, GenericReceiverIfc {
 
     private var remotingReceiveService: RemotingReceiveService? = null
     private var remotingSendService: RemotingSendService? = null
@@ -44,15 +44,10 @@ abstract class RemotingModel() : Crc16CheckFailedCallbackIfc, DataListenerIfc {
         crc16CheckSendLayer!!.setInitialCrcValue(0xFFFF.toShort())
         remotingSendService = RemotingSendService(2048, crc16CheckSendLayer)
 
-        vitalSignsDataRemoteObject = GenericRemoteObject(GenericReceiverIfc {
-            fun onDataReceived(data: SerializableIfc?) {
-                val vitalSignsData: VitalSignsDataProtocol? = data as? VitalSignsDataProtocol
+        vitalSignsDataRemoteObject = GenericRemoteObject(this, VitalSignsDataProtocol.builder().build())
 
-            }
-        })
-
-        engineSettingsRemoteObject = GenericRemoteObject(null)
-        engineCommandRemoteObject = GenericRemoteObject(null)
+        engineSettingsRemoteObject = GenericRemoteObject(null, null)
+        engineCommandRemoteObject = GenericRemoteObject(null, null)
 
         remotingReceiveService!!.add(vitalSignsDataRemoteObject, ProtocolIdentifier.VITAL_SIGNS_DATA)
 
@@ -65,8 +60,16 @@ abstract class RemotingModel() : Crc16CheckFailedCallbackIfc, DataListenerIfc {
         TODO("Not yet implemented")
     }
 
-    override fun onDataReceived(data: ByteArray) {
-        frameSyncReceiveLayer?.onDataReceived(ByteBuffer.wrap(data))
+    override fun onDataReceived(receiveBuffer: ByteBuffer?) {
+        frameSyncReceiveLayer?.onDataReceived(receiveBuffer)
+    }
+
+    override fun onDataReceived(data: SerializableIfc?) {
+        when(data) {
+            is VitalSignsDataProtocol -> {
+                processData(data)
+            }
+        }
     }
 
     fun setLowerLevelSender(dataSender: DataSenderIfc) {
