@@ -17,6 +17,9 @@ import com.example.figmatest.protocol.EngineSettingsProtocol
 import com.example.figmatest.protocol.PatientSettingsProtocol
 import com.example.figmatest.protocol.ProtocolIdentifier
 import com.example.figmatest.protocol.VitalSignsDataProtocol
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.nio.ByteBuffer
 
 abstract class RemotingModel() : RemoteDataProducer(), Crc16CheckFailedCallbackIfc, DataReceiverIfc, GenericReceiverIfc {
@@ -65,9 +68,11 @@ abstract class RemotingModel() : RemoteDataProducer(), Crc16CheckFailedCallbackI
     }
 
     override fun onDataReceived(data: SerializableIfc?) {
-        when(data) {
-            is VitalSignsDataProtocol -> {
-                processData(data)
+        CoroutineScope(Dispatchers.Main).launch {
+            when (data) {
+                is VitalSignsDataProtocol -> {
+                    processData(data)
+                }
             }
         }
     }

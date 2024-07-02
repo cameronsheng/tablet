@@ -8,8 +8,10 @@ import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.annotation.RequiresApi
 import com.example.figmatest.controller.TcpDataController
+import com.example.figmatest.model.SerialRemotingModel
 import com.example.figmatest.view.TcpDataView
 import com.example.figmatest.view.DataViewIfc
+import com.example.figmatest.view.SerialDataView
 
 
 class MainActivity : ComponentActivity(), DataViewIfc {
@@ -29,7 +31,7 @@ class MainActivity : ComponentActivity(), DataViewIfc {
     }
 
     fun onSerialDataPressed(v: View?) {
-        val intent = Intent(this, TcpDataView::class.java)
+        val intent = Intent(this, SerialDataView::class.java)
         startActivity(intent)
     }
 

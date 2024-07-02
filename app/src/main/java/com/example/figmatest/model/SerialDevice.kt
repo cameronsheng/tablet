@@ -9,6 +9,7 @@ import android.content.IntentFilter
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.util.Log
+import com.example.figmatest.imt.base.lib.remoting.DataReceiverIfc
 import com.example.figmatest.imt.base.lib.remoting.DataSenderIfc
 import com.hoho.android.usbserial.driver.UsbSerialDriver
 import com.hoho.android.usbserial.driver.UsbSerialPort
@@ -19,7 +20,7 @@ import java.nio.ByteBuffer
 import java.util.concurrent.Executors
 
 
-object SerialDevice : RemoteDataProducer(), DataSenderIfc {
+class SerialDevice(val upperLevelReceiver: DataReceiverIfc) : DataSenderIfc {
 
     private var serialPort: UsbSerialPort? = null
     private var ioManager: SerialInputOutputManager? = null
@@ -70,7 +71,7 @@ object SerialDevice : RemoteDataProducer(), DataSenderIfc {
         return false
     }
 
-    fun connect(): Boolean {
+    private fun connect(): Boolean {
         if (driver != null) {
             serialPort = driver?.ports?.get(0)
 
@@ -81,7 +82,7 @@ object SerialDevice : RemoteDataProducer(), DataSenderIfc {
             }
             serialPort?.apply {
                 open(connection)
-                setParameters(9600, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE)
+                setParameters(115200, 8, UsbSerialPort.STOPBITS_1, UsbSerialPort.PARITY_NONE)
             }
 
             ioManager =
@@ -91,7 +92,7 @@ object SerialDevice : RemoteDataProducer(), DataSenderIfc {
                     }
 
                     override fun onNewData(data: ByteArray) {
-                        processData(data)
+                        upperLevelReceiver.onDataReceived(ByteBuffer.wrap(data))
                     }
                 })
             Executors.newSingleThreadExecutor().submit(ioManager)

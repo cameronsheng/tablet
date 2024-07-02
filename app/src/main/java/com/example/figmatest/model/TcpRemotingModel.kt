@@ -14,7 +14,7 @@ object TcpRemotingModel : RemotingModel() {
     }
     fun start() {
         CoroutineScope(Dispatchers.Main).launch {
-            tcpClient?.connect("192.168.5.166", 8080)
+            tcpClient?.connect("192.168.5.200", 8080)
             tcpClient?.receive()
         }
     }
