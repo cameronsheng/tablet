@@ -19,14 +19,13 @@ class DataController(private val view : SerialDataViewIfc, private val context :
     fun start() {
         CoroutineScope(Dispatchers.Main).launch {
             TcpRemotingModel.start()
-            TcpRemotingModel.sendSettings()
-            TcpRemotingModel.sendCommand()
         }
 
     }
 
     fun sendData(data : String) {
-
+        TcpRemotingModel.sendSettings()
+        TcpRemotingModel.sendCommand()
     }
 
     fun stop() {

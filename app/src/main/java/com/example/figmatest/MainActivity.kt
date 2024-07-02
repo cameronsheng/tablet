@@ -38,9 +38,9 @@ class MainActivity : ComponentActivity(), SerialDataViewIfc {
             }
         }
         Log.d("Main", "start serial controller")
-        SerialDevice.start(this)
-//        dataController = DataController(this, this)
-//        dataController?.start()
+        //SerialDevice.start(this)
+        dataController = DataController(this, this)
+        dataController?.start()
 //        val builder = UnhiddenSoftApConfigurationBuilder();
 //        val macAddress = MacAddress.fromString("02:00:00:00:00:00");
 //        val config = builder.setBand(UnhiddenSoftApConfigurationBuilder.BAND_2GHZ)

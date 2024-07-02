@@ -9,15 +9,17 @@ import android.content.IntentFilter
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
 import android.util.Log
+import com.example.figmatest.imt.base.lib.remoting.DataSenderIfc
 import com.hoho.android.usbserial.driver.UsbSerialDriver
 import com.hoho.android.usbserial.driver.UsbSerialPort
 import com.hoho.android.usbserial.driver.UsbSerialProber
 import com.hoho.android.usbserial.util.SerialInputOutputManager
 import java.io.IOException
+import java.nio.ByteBuffer
 import java.util.concurrent.Executors
 
 
-object SerialDevice : DataProducer() {
+object SerialDevice : DataProducer(), DataSenderIfc {
 
     private var serialPort: UsbSerialPort? = null
     private var ioManager: SerialInputOutputManager? = null
@@ -110,5 +112,18 @@ object SerialDevice : DataProducer() {
 
     fun sendData(data: ByteArray) {
         serialPort?.write(data, 1000)
+    }
+
+    override fun sendData(sendBuffer: ByteBuffer?): Boolean {
+        var data = sendBuffer?.let { ByteArray(it.position()) }
+        if (sendBuffer != null) {
+            sendBuffer.rewind()
+            sendBuffer.get(data)
+            if (data != null) {
+                sendData(data)
+                return true
+            }
+        }
+        return false
     }
 }

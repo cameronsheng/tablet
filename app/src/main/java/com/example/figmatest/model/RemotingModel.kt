@@ -2,6 +2,7 @@ package com.example.figmatest.model
 
 import com.example.figmatest.DataListenerIfc
 import com.example.figmatest.imt.base.core.serialization.SerializableIfc
+import com.example.figmatest.imt.base.lib.remoting.DataSenderIfc
 import com.example.figmatest.imt.base.lib.remoting.layers.crc16check.Crc16CheckFailedCallbackIfc
 import com.example.figmatest.imt.base.lib.remoting.layers.crc16check.Crc16CheckReceiveLayer
 import com.example.figmatest.imt.base.lib.remoting.layers.crc16check.Crc16CheckSendLayer
@@ -56,7 +57,7 @@ abstract class RemotingModel() : Crc16CheckFailedCallbackIfc, DataListenerIfc {
         remotingReceiveService!!.add(vitalSignsDataRemoteObject, ProtocolIdentifier.VITAL_SIGNS_DATA)
 
         remotingSendService!!.add(engineCommandRemoteObject, ProtocolIdentifier.ENGINE_COMMAND)
-        remotingReceiveService!!.add(engineCommandRemoteObject, ProtocolIdentifier.ENGINE_SETTINGS)
+        remotingSendService!!.add(engineSettingsRemoteObject, ProtocolIdentifier.ENGINE_SETTINGS)
 
     }
 
@@ -68,6 +69,10 @@ abstract class RemotingModel() : Crc16CheckFailedCallbackIfc, DataListenerIfc {
         frameSyncReceiveLayer?.onDataReceived(ByteBuffer.wrap(data))
     }
 
+    fun setLowerLevelSender(dataSender: DataSenderIfc) {
+        frameSyncSendLayer?.setLowerLevelSender(dataSender)
+    }
+    
     fun sendCommand() {
         var engineCommandProtocolBuilder: EngineCommandProtocol.Builder = EngineCommandProtocol.builder()
         engineCommandRemoteObject?.setDataToSend(engineCommandProtocolBuilder.engineCommand(0).build())
