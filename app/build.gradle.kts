@@ -47,6 +47,18 @@ android {
 }
 
 dependencies {
+    implementation(fileTree(mapOf(
+        "dir" to "libs",
+        "include" to listOf("*.aar", "*.jar"),
+    )))
+//    implementation(linkedMapOf("name" to "charting-release","ext" to "aar"))
+//    implementation(linkedMapOf("name" to "core-release","ext" to "aar"))
+//    implementation(linkedMapOf("name" to "drawing-release","ext" to "aar"))
+//    implementation(linkedMapOf("name" to "data-release","ext" to "aar"))
+//    implementation("com.scichart:charting-release:1.0@aar")
+//    implementation("com.scichart:core-release:1.0@aar")
+//    implementation("com.scichart:drawing-release:1.0@aar")
+//    implementation("com.scichart:data-release:1.0@aar")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -57,6 +69,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation("com.github.mik3y:usb-serial-for-android:3.7.3")
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
