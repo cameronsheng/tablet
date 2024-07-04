@@ -23,8 +23,8 @@ class SerialDataView : ComponentActivity(), DataViewIfc {
 
     }
 
-    override fun displayData(data : String) {
-        outputTextView.append(data)
+    override fun displayData(data : Float) {
+        outputTextView.append(data.toString())
     }
 
     fun onSendSettingsPressed(v: View?) {

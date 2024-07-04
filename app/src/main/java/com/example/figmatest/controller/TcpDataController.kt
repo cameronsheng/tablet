@@ -5,9 +5,6 @@ import com.example.figmatest.DataListenerIfc
 import com.example.figmatest.model.TcpRemotingModel
 import com.example.figmatest.protocol.VitalSignsDataProtocol
 import com.example.figmatest.view.DataViewIfc
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class TcpDataController(private val view : DataViewIfc, private val context : Context) : DataListenerIfc {
 
@@ -15,7 +12,7 @@ class TcpDataController(private val view : DataViewIfc, private val context : Co
         // send data to activity
         when (data) {
             is VitalSignsDataProtocol -> {
-                view.displayData("Received VitalSignsData with tidal volume: " + data.tidalVolume);
+                view.displayData(data.tidalVolume);
             }
         }
     }
@@ -28,11 +25,11 @@ class TcpDataController(private val view : DataViewIfc, private val context : Co
     fun sendData(data : String) {
     }
 
-    fun sendSettings() {
+    fun onSendSettingsPressed() {
         TcpRemotingModel.sendSettings()
     }
 
-    fun sendCommand() {
+    fun onSendCommandPressed() {
         TcpRemotingModel.sendCommand()
     }
 

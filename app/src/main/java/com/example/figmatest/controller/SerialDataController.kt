@@ -14,7 +14,7 @@ class SerialDataController(private val view : DataViewIfc, private val context :
         // send data to activity
         when (data) {
             is VitalSignsDataProtocol -> {
-                view.displayData("Received VitalSignsData with tidal volume: " + data.tidalVolume);
+                view.displayData(data.tidalVolume);
             }
         }
     }

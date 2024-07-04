@@ -19,11 +19,9 @@
         android:onClick="onSendCommandPressed"
         android:text="Send command" />
 
-    <TextView
-        android:id="@+id/outputText"
+    <com.example.figmatest.view.chart.CustomSciChartSurface
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="start|top" />
-
+        android:layout_height="300dp"
+        android:id="@+id/chart"/>
 
 </LinearLayout>
