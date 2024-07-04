@@ -2,6 +2,7 @@ package com.example.figmatest.controller
 
 import android.content.Context
 import com.example.figmatest.DataListenerIfc
+import com.example.figmatest.enums.EngineCommand
 import com.example.figmatest.model.SerialRemotingModel
 import com.example.figmatest.model.TcpRemotingModel
 import com.example.figmatest.protocol.VitalSignsDataProtocol
@@ -32,7 +33,7 @@ class SerialDataController(private val view : DataViewIfc, private val context :
     }
 
     fun sendCommand() {
-        SerialRemotingModel.sendCommand()
+        SerialRemotingModel.sendCommand(EngineCommand.START)
     }
 
     fun stop() {

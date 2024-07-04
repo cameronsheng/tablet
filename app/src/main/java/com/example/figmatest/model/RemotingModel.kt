@@ -1,5 +1,6 @@
 package com.example.figmatest.model
 
+import com.example.figmatest.enums.EngineCommand
 import com.example.figmatest.imt.base.core.serialization.SerializableIfc
 import com.example.figmatest.imt.base.lib.remoting.DataReceiverIfc
 import com.example.figmatest.imt.base.lib.remoting.DataSenderIfc
@@ -60,7 +61,7 @@ abstract class RemotingModel() : RemoteDataProducer(), Crc16CheckFailedCallbackI
     }
 
     override fun onCrc16CheckFailed(receiveBuffer: ByteBuffer?) {
-        TODO("Not yet implemented")
+        //TODO("Not yet implemented")
     }
 
     override fun onDataReceived(receiveBuffer: ByteBuffer?) {
@@ -81,9 +82,9 @@ abstract class RemotingModel() : RemoteDataProducer(), Crc16CheckFailedCallbackI
         frameSyncSendLayer?.setLowerLevelSender(dataSender)
     }
     
-    fun sendCommand() {
+    fun sendCommand(command: EngineCommand) {
         var engineCommandProtocolBuilder: EngineCommandProtocol.Builder = EngineCommandProtocol.builder()
-        engineCommandRemoteObject?.setDataToSend(engineCommandProtocolBuilder.engineCommand(0).build())
+        engineCommandRemoteObject?.setDataToSend(engineCommandProtocolBuilder.engineCommand(command.value.toShort()).build())
         remotingSendService?.send(ProtocolIdentifier.ENGINE_COMMAND)
     }
 

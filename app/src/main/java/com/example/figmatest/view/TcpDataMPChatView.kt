@@ -6,6 +6,7 @@ import android.view.View
 import androidx.activity.ComponentActivity
 import com.example.figmatest.R
 import com.example.figmatest.controller.TcpDataController
+import com.example.figmatest.enums.EngineCommand
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.XAxis
 import com.github.mikephil.charting.components.YAxis
@@ -45,7 +46,7 @@ class TcpDataMPChatView : ComponentActivity(), DataViewIfc {
     }
 
     fun onSendCommandPressed(v: View?) {
-        tcpDataController.onSendCommandPressed()
+        tcpDataController.onSendCommandPressed(EngineCommand.START)
     }
 
     private fun setupChart() {

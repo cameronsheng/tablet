@@ -62,7 +62,7 @@ class TcpClient(val upperLevelReceiver: DataReceiverIfc): DataSenderIfc {
      fun receive() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                while(true) {
+                while(socket != null && socket!!.isConnected) {
                     var bytesToRead = 0
                     bytesToRead = input?.available()!!
                     if (bytesToRead > 0) {

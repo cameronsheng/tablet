@@ -2,6 +2,7 @@ package com.example.figmatest
 
 import android.app.Application
 import android.content.Context
+import com.example.figmatest.model.TcpRemotingModel
 
 class TamboApplication  : Application() {
 
@@ -16,5 +17,8 @@ class TamboApplication  : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+
+        // Start TCP remoting model
+        TcpRemotingModel.start()
     }
 }

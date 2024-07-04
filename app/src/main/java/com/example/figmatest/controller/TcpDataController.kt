@@ -2,6 +2,7 @@ package com.example.figmatest.controller
 
 import android.content.Context
 import com.example.figmatest.DataListenerIfc
+import com.example.figmatest.enums.EngineCommand
 import com.example.figmatest.model.TcpRemotingModel
 import com.example.figmatest.protocol.VitalSignsDataProtocol
 import com.example.figmatest.view.DataViewIfc
@@ -19,7 +20,7 @@ class TcpDataController(private val view : DataViewIfc, private val context : Co
 
     fun start() {
         TcpRemotingModel.addDataListener(this)
-        TcpRemotingModel.start()
+        //TcpRemotingModel.start()
     }
 
     fun sendData(data : String) {
@@ -29,8 +30,8 @@ class TcpDataController(private val view : DataViewIfc, private val context : Co
         TcpRemotingModel.sendSettings()
     }
 
-    fun onSendCommandPressed() {
-        TcpRemotingModel.sendCommand()
+    fun onSendCommandPressed(command: EngineCommand) {
+        TcpRemotingModel.sendCommand(command)
     }
 
     fun stop() {

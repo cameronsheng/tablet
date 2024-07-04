@@ -8,6 +8,7 @@ object TcpRemotingModel : RemotingModel() {
 
     private var tcpClient: TcpClient? = null
     private var udpClient: UdpClient? = null
+    private var ip: String = ""
 
     init {
         tcpClient = TcpClient(this)
@@ -17,11 +18,15 @@ object TcpRemotingModel : RemotingModel() {
     fun start() {
         CoroutineScope(Dispatchers.IO).launch {
             udpClient?.start()
-            var ip = "";
             while (ip.isEmpty()) {
-                ip = udpClient?.receive().toString()
+                var newIp =  udpClient?.receive().toString()
+                if (newIp.isNotEmpty()) {
+                    if (!newIp.equals(ip)) {
+                        tcpClient?.connect(newIp, 8080)
+                        ip = newIp
+                    }
+                }
             }
-            tcpClient?.connect(ip, 8080)
             tcpClient?.receive()
         }
     }

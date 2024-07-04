@@ -1,10 +1,13 @@
 package com.example.figmatest.view
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.example.figmatest.R
 import com.example.figmatest.controller.TcpDataController
+import com.example.figmatest.enums.EngineCommand
 import com.example.figmatest.view.chart.ChartSurfaceIfc
 import com.example.figmatest.view.chart.CustomSciChartSurface
 import com.example.figmatest.view.chart.SweepingChartSurface
@@ -36,7 +39,7 @@ class TcpDataView : ComponentActivity(), DataViewIfc {
     }
 
     fun onSendCommandPressed(v: View?) {
-        tcpDataController.onSendCommandPressed()
+        showCommandDialog()
     }
 
     private fun setupChart() {
@@ -55,5 +58,28 @@ class TcpDataView : ComponentActivity(), DataViewIfc {
             val milliseconds = value % 1000
             return String.format("%.0fs %.0fms", seconds, milliseconds)
         }
+    }
+
+    private fun showCommandDialog() {
+        val options = EngineCommand.values().map { it.name.replace("_", " ") }.toTypedArray()
+        var selectedOption: EngineCommand? = null
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Choose an Option")
+            .setSingleChoiceItems(options, -1) { _, which ->
+                selectedOption = EngineCommand.values()[which]
+            }
+            .setPositiveButton("Send") { _, _ ->
+                selectedOption?.let { onOptionSelected(it) }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun onOptionSelected(command: EngineCommand) {
+        // Handle the selected option here
+        Toast.makeText(this, "Selected option: $command", Toast.LENGTH_LONG).show()
+        // Implement the callback logic here
+        tcpDataController.onSendCommandPressed(command)
     }
 }
