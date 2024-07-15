@@ -20,7 +20,6 @@ class TcpDataController(private val view : DataViewIfc, private val context : Co
 
     fun start() {
         TcpRemotingModel.addDataListener(this)
-        //TcpRemotingModel.start()
     }
 
     fun sendData(data : String) {

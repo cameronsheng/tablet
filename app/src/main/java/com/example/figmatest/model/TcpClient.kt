@@ -102,4 +102,8 @@ class TcpClient(val upperLevelReceiver: DataReceiverIfc): DataSenderIfc {
         }
         return true
     }
+
+    fun isConnected(): Boolean {
+        return socket?.let { it.isConnected && !it.isClosed } ?: false
+    }
 }

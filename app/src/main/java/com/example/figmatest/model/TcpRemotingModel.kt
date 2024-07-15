@@ -27,7 +27,9 @@ object TcpRemotingModel : RemotingModel() {
                     }
                 }
             }
-            tcpClient?.receive()
+            if (tcpClient?.isConnected() == true) {
+                tcpClient?.receive()
+            }
         }
     }
 }
