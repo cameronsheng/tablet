@@ -99,8 +99,8 @@ public class ProtocolIdentifier {
     public static final int SNAPSHOT_INFO_DATA = 195;
     public static final int PRODUCTION_TEST = 196;
     public static final int CURVE_TRIGGER_CONFIGURATION = 197;
-    public static final int VITAL_SIGNS_DATA = 2002;
-    public static final int ENGINE_SETTINGS = 2005;
-    public static final int ENGINE_COMMAND = 2006;
-    public static final int PATIENT_SETTINGS = 20016;
+    public static final int VITAL_SIGNS_DATA = 2011;
+    public static final int ENGINE_SETTINGS = 2004;
+    public static final int ENGINE_COMMAND = 2003;
+    public static final int PATIENT_SETTINGS = 2005;
 }
