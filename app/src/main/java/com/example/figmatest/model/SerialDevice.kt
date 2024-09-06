@@ -8,7 +8,9 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbManager
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.example.figmatest.imt.base.lib.remoting.DataReceiverIfc
 import com.example.figmatest.imt.base.lib.remoting.DataSenderIfc
 import com.hoho.android.usbserial.driver.UsbSerialDriver
@@ -28,6 +30,7 @@ class SerialDevice(val upperLevelReceiver: DataReceiverIfc) : DataSenderIfc {
     private var usbManager: UsbManager? = null
     private var driver: UsbSerialDriver? = null
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun start(context: Context): Boolean {
         //val context: Context = TamboApplication.getAppContext()
         usbManager = context.getSystemService(USB_SERVICE) as UsbManager
@@ -39,7 +42,7 @@ class SerialDevice(val upperLevelReceiver: DataReceiverIfc) : DataSenderIfc {
             return false
         }
         val permissionIntent = PendingIntent.getBroadcast(context, 0, Intent("com.example.USB_PERMISSION"),
-            PendingIntent.FLAG_UPDATE_CURRENT)
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         val permissionReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
@@ -49,7 +52,7 @@ class SerialDevice(val upperLevelReceiver: DataReceiverIfc) : DataSenderIfc {
                         synchronized(this) {
                             if (intent.getBooleanExtra(
                                     UsbManager.EXTRA_PERMISSION_GRANTED,
-                                    false
+                                    true
                                 )
                             ) {
                                 Log.d("USB", "Permission accepted for device")
@@ -65,7 +68,7 @@ class SerialDevice(val upperLevelReceiver: DataReceiverIfc) : DataSenderIfc {
         }
 
         val filter: IntentFilter = IntentFilter("com.example.USB_PERMISSION")
-        context.registerReceiver(permissionReceiver, filter)
+        context.registerReceiver(permissionReceiver, filter, Context.RECEIVER_EXPORTED)
         usbManager!!.requestPermission(driver!!.device, permissionIntent)
 
         return false
